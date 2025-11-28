@@ -15,9 +15,7 @@ from utils import camera_utils
 from .utils_pe import get_2d_sincos_pos_embed
 from .utils_rot import rot6d2mat, quat2mat
 from .utils_gaussian import get_point_range_func, Renderer
-from .utils_vis import (
-    build_stepback_c2ws,
-)
+from .utils_vis import build_stepback_c2ws
 
 
 def build_transformer_blocks(

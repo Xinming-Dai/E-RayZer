@@ -5,7 +5,6 @@ from easydict import EasyDict as edict
 
 from .gaussians_renderer import (
     GaussianModel,
-    render_opencv_cam,
     render_opencv_cam_gsplat,
     deferred_gaussian_render,
 )

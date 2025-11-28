@@ -8,10 +8,6 @@ import cv2
 import matplotlib
 import numpy as np
 import torch
-from diff_gaussian_rasterization import (
-    GaussianRasterizationSettings,
-    GaussianRasterizer,
-)
 from gsplat import rasterization
 from einops import rearrange
 from plyfile import PlyData, PlyElement
@@ -721,80 +717,6 @@ class GaussianModel:
         ).contiguous()
         self._scaling = torch.from_numpy(scales.astype(np.float32)).contiguous()
         self._rotation = torch.from_numpy(rots.astype(np.float32)).contiguous()
-
-
-def render_opencv_cam(
-    pc: GaussianModel,
-    height: int,
-    width: int,
-    C2W: torch.Tensor,
-    fxfycxcy: torch.Tensor,
-    bg_color=(1.0, 1.0, 1.0),
-    scaling_modifier=1.0,
-):
-    """
-    Render the scene.
-
-    Background tensor (bg_color) must be on GPU!
-    """
-    # Create zero tensor. We will use it to make pytorch return gradients of the 2D (screen-space) means
-    screenspace_points = torch.empty_like(
-        pc.get_xyz, dtype=pc.get_xyz.dtype, requires_grad=True, device="cuda"
-    )
-    # try:
-    #     screenspace_points.retain_grad()
-    # except:
-    #     pass
-
-    viewpoint_camera = Camera(C2W=C2W, fxfycxcy=fxfycxcy, h=height, w=width)
-
-    bg_color = torch.tensor(list(bg_color), dtype=torch.float32, device=C2W.device)
-
-    # Set up rasterization configuration
-    raster_settings = GaussianRasterizationSettings(
-        image_height=int(viewpoint_camera.h),
-        image_width=int(viewpoint_camera.w),
-        tanfovx=viewpoint_camera.tanfovX,
-        tanfovy=viewpoint_camera.tanfovY,
-        bg=bg_color,
-        scale_modifier=scaling_modifier,
-        viewmatrix=viewpoint_camera.world_view_transform,
-        projmatrix=viewpoint_camera.full_proj_transform,
-        sh_degree=pc.sh_degree,
-        campos=viewpoint_camera.camera_center,
-        prefiltered=False,
-        debug=False,
-    )
-
-    rasterizer = GaussianRasterizer(raster_settings=raster_settings)
-
-    means3D = pc.get_xyz
-    means2D = screenspace_points
-    opacity = pc.get_opacity
-    scales = pc.get_scaling
-    rotations = pc.get_rotation
-    shs = pc.get_features
-
-    # Rasterize visible Gaussians to image, obtain their radii (on screen).
-    rendered_image, radii = rasterizer(
-        means3D=means3D,
-        means2D=means2D,
-        shs=shs,
-        colors_precomp=None,
-        opacities=opacity,
-        scales=scales,
-        rotations=rotations,
-        cov3D_precomp=None,
-    )
-
-    # Those Gaussians that were frustum culled or had a radius of 0 were not visible.
-    # They will be excluded from value updates used in the splitting criteria.
-    return {
-        "render": rendered_image,
-        "viewspace_points": screenspace_points,
-        "visibility_filter": radii > 0,
-        "radii": radii,
-    }
 
 
 def render_opencv_cam_gsplat(
