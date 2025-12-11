@@ -168,10 +168,10 @@ def build_demo(args) -> gr.Blocks:
     _TITLE = "E-RayZer: Self-supervised 3D Reconstruction as Spatial Visual Pre-training"
     _DESCRIPTION = """
     <div>
-    <a style="display:inline-block" href="https://qitaozhao.github.io/DiffusionSfM"><img src='https://img.shields.io/badge/public_website-8A2BE2'></a>
-    <a style="display:inline-block; margin-left: .5em" href='https://github.com/QitaoZhao/DiffusionSfM'><img src='https://img.shields.io/github/stars/QitaoZhao/DiffusionSfM?style=social'/></a>
+    <a style="display:inline-block" href="https://qitaozhao.github.io/E-RayZer"><img src='https://img.shields.io/badge/public_website-8A2BE2'></a>
+    <a style="display:inline-block; margin-left: .5em" href='https://github.com/QitaoZhao/E-RayZer'><img src='https://img.shields.io/github/stars/QitaoZhao/E-RayZer?style=social'/></a>
     </div>
-    DiffusionSfM learns to predict scene geometry and camera poses as pixel-wise ray origins and endpoints using a denoising diffusion model.
+    E-RayZer, a self-supervised 3D Vision model predicting camera poses and scene geometry as 3D Gaussians.
     """
 
     # Use helper so theme doesn’t break older Gradio.
@@ -192,7 +192,7 @@ def build_demo(args) -> gr.Blocks:
                     "Upload your images above or pick a curated example below."
                 )
 
-                max_examples = 4
+                max_examples = 5
                 gallery_value = (
                     [example[0][0] for example in EXAMPLES_FULL]
                     if EXAMPLES_FULL
@@ -204,7 +204,7 @@ def build_demo(args) -> gr.Blocks:
                     value=visible_examples,
                     label="Examples",
                     show_label=True,
-                    columns=max_examples,
+                    columns=4,
                 )
 
                 selected = gr.State()
