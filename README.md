@@ -5,7 +5,7 @@
 	<a href="https://huggingface.co/spaces/qitaoz/E-RayZer"><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue'></a>
 </div>
 
-<video src='https://raw.githubusercontent.com/QitaoZhao/QitaoZhao.github.io/main/research/E-RayZer/videos/overview.mp4'></video>
+![overview](assets/overview.gif)
 	
 ![teaser](https://raw.githubusercontent.com/QitaoZhao/QitaoZhao.github.io/main/research/E-RayZer/images/erayzer_teaser.png)
 
