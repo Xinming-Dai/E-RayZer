@@ -33,13 +33,12 @@ pip install -e third_party/gsplat/
 - `checkpoints/erayzer_multi.pt`: Multi-dataset model (default for the demo).
 - `checkpoints/erayzer_dl3dv.pt`: Model finetuned on DL3DV sequences for maximum fidelity on that dataset.
 
-If you cloned the lightweight version of the repo, grab the weights from the project release page (link coming soon) and place them inside `checkpoints/`. Update `--ckpt` if you store them elsewhere.
+`gradio_app.py` automatically fetches `erayzer_multi.pt` from [Hugging Face](https://huggingface.co/qitaoz/E-RayZer/blob/main/checkpoints/erayzer_multi.pt) the first time you run it (cached under your Hugging Face cache directory). You can still drop pre-downloaded weights in `checkpoints/` and/or pass `--ckpt /path/to/weights.pt` to point at a custom file.
 
 ### 3. Launch the Gradio app
 ```bash
 python gradio_app.py \
 	--config config/erayzer.yaml \
-	--ckpt checkpoints/erayzer_multi.pt \
 	--device cuda:0 \
 	--output-dir outputs \
 	--share

@@ -6,23 +6,94 @@ import os
 import shutil
 import time
 from typing import Dict, List, Optional, Sequence, Tuple
+from urllib.parse import urlparse
 
 import gradio as gr
 import numpy as np
 import torch
 from PIL import Image
+from huggingface_hub import hf_hub_download
 
 from app_core.engine import get_engine
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_CONFIG = os.path.join(THIS_DIR, "config", "erayzer.yaml")
-DEFAULT_CKPT = os.path.join(THIS_DIR, "checkpoints", "erayzer_multi.pt")
 DEFAULT_OUTPUT_ROOT = os.path.join(THIS_DIR, "outputs")
 EXAMPLES_DIR = os.path.join(THIS_DIR, "examples")
 IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".webp")
 
+HF_REPO_ID = "qitaoz/E-RayZer"
+HF_REVISION = "main"
+HF_CKPT_FILENAME = "checkpoints/erayzer_multi.pt"
+DEFAULT_LOCAL_CKPT = os.path.join(THIS_DIR, HF_CKPT_FILENAME)
+DEFAULT_CKPT = f"https://huggingface.co/{HF_REPO_ID}/blob/{HF_REVISION}/{HF_CKPT_FILENAME}"
+
 EXAMPLES_LIST: List[str] = []
 EXAMPLES_FULL: List[List[List[str]]] = []
+
+
+def _is_hf_url(value: str) -> bool:
+    return value.startswith("https://huggingface.co/")
+
+
+def _parse_hf_url(url: str) -> Tuple[str, str, str]:
+    """Extract repo id, revision, and file path from a huggingface.co URL."""
+    parsed = urlparse(url)
+    if parsed.netloc != "huggingface.co":
+        raise ValueError(f"Unsupported checkpoint host: {parsed.netloc}")
+
+    segments = [segment for segment in parsed.path.split("/") if segment]
+    if len(segments) < 3:
+        raise ValueError(f"Malformed Hugging Face URL: {url}")
+
+    repo_id = "/".join(segments[:2])
+    pointer = segments[2]
+    if pointer in {"blob", "resolve", "raw"}:
+        if len(segments) < 5:
+            raise ValueError(f"Missing file path in Hugging Face URL: {url}")
+        revision = segments[3]
+        file_path = "/".join(segments[4:])
+    else:
+        revision = HF_REVISION
+        file_path = "/".join(segments[2:])
+    return repo_id, revision, file_path
+
+
+def _maybe_existing_checkpoint(path: str) -> Optional[str]:
+    expanded = os.path.expanduser(path)
+    if os.path.isfile(expanded):
+        return os.path.abspath(expanded)
+    if not os.path.isabs(expanded):
+        repo_relative = os.path.join(THIS_DIR, expanded)
+        if os.path.isfile(repo_relative):
+            return repo_relative
+    return None
+
+
+def _get_default_checkpoint() -> str:
+    existing = _maybe_existing_checkpoint(DEFAULT_LOCAL_CKPT)
+    if existing:
+        return existing
+    return hf_hub_download(
+        repo_id=HF_REPO_ID,
+        filename=HF_CKPT_FILENAME,
+        revision=HF_REVISION,
+    )
+
+
+def _resolve_checkpoint_path(ckpt_arg: Optional[str]) -> str:
+    """Resolve user-provided checkpoint path or download from Hugging Face."""
+    if ckpt_arg:
+        if ckpt_arg == DEFAULT_CKPT:
+            return _get_default_checkpoint()
+        existing = _maybe_existing_checkpoint(ckpt_arg)
+        if existing:
+            return existing
+        if _is_hf_url(ckpt_arg):
+            repo_id, revision, file_path = _parse_hf_url(ckpt_arg)
+            return hf_hub_download(repo_id=repo_id, filename=file_path, revision=revision)
+        raise FileNotFoundError(f"Checkpoint not found: {ckpt_arg}")
+    return _get_default_checkpoint()
 
 
 def info_fn() -> None:
@@ -155,9 +226,10 @@ def build_demo(args) -> gr.Blocks:
     EXAMPLES_LIST, EXAMPLES_FULL = _discover_examples(EXAMPLES_DIR)
 
     inferred_device = args.device or ("cuda:0" if torch.cuda.is_available() else "cpu")
+    ckpt_path = _resolve_checkpoint_path(args.ckpt)
     defaults = {
         "config": args.config or DEFAULT_CONFIG,
-        "ckpt": args.ckpt or DEFAULT_CKPT,
+        "ckpt": ckpt_path,
         "device": inferred_device,
         "output_dir": args.output_dir or DEFAULT_OUTPUT_ROOT,
     }
@@ -291,7 +363,9 @@ def main() -> None:
         "--config", default=DEFAULT_CONFIG, help="Default config path"
     )
     parser.add_argument(
-        "--ckpt", default=DEFAULT_CKPT, help="Default checkpoint path"
+        "--ckpt",
+        default=DEFAULT_CKPT,
+        help="Checkpoint path or Hugging Face URL (defaults to downloading from qitaoz/E-RayZer)",
     )
     parser.add_argument(
         "--device", default=None, help="Default device override"
