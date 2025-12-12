@@ -1,7 +1,18 @@
-# E-RayZer
-This repository contains the official implementation for **Self-supervised 3D Reconstruction as Spatial Visual Pre-training**.
+<div align="center">
+<h1>E-RayZer: Self-supervised 3D Reconstruction as Spatial Visual Pre-training</h1>
+<a href="https://arxiv.org/abs/2512.10950"><img src="https://img.shields.io/badge/arXiv-2503.11651-b31b1b" alt="arXiv"></a>
+<a href="https://qitaozhao.github.io/E-RayZer"><img src="https://img.shields.io/badge/Project_Page-green" alt="Project Page"></a>
+<a href="https://huggingface.co/spaces/qitaoz/E-RayZer"><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue'></a>
 
-[Project Page](https://qitaozhao.github.io/E-RayZer) · arXiv (coming soon) · Local Gradio demo (this repo)
+<video
+  src="https://raw.githubusercontent.com/QitaoZhao/QitaoZhao.github.io/main/research/E-RayZer/videos/overview.mp4"
+  autoplay
+  loop
+  muted
+  playsinline
+  controls
+>
+</video>
 
 ![teaser](https://raw.githubusercontent.com/QitaoZhao/QitaoZhao.github.io/main/research/E-RayZer/images/erayzer_teaser.png)
 
@@ -10,9 +21,8 @@ This repository contains the official implementation for **Self-supervised 3D Re
 - `app_core/engine.py`: Thin wrapper that loads configs, checkpoints, and exports renders, Gaussian point clouds, and turntable videos.
 - `erayzer_core/`: Model, transformer blocks, and Gaussian renderer used at inference time.
 - `config/erayzer.yaml`: Default inference configuration (image sizes, number of views, view selector, transformer depth, etc.).
-- `checkpoints/`: Pretrained weights (`erayzer_multi.pt`, `erayzer_dl3dv.pt`).
 - `examples/`: Five curated multi-view sets for quick validation.
-- `third_party/gsplat/`: Vendored differentiable Gaussian splatting ops that must be installed in editable mode.
+- `third_party/gsplat/`: Differentiable Gaussian splatting ops (with our intrinsics-gradient support).
 
 ## Quick Start
 
@@ -21,24 +31,20 @@ This repository contains the official implementation for **Self-supervised 3D Re
 conda create -n erayzer python=3.10 -y
 conda activate erayzer
 
-pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 \
-		--index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
-pip install -e third_party/gsplat/
+pip install -e third_party/gsplat/  # This takes time
 ```
-- CUDA 12.1 GPUs with ≥24 GB memory are recommended for the default 10-view setting. The demo automatically falls back to CPU (slower) if CUDA is unavailable.
-- `imageio[ffmpeg]` pulls the ffmpeg backend used for MP4 export. Install the system-level `ffmpeg` binary if `imageio` cannot find one on your platform.
-
 ### 2. Download or place checkpoints
 - `checkpoints/erayzer_multi.pt`: Multi-dataset model (default for the demo).
-- `checkpoints/erayzer_dl3dv.pt`: Model finetuned on DL3DV sequences for maximum fidelity on that dataset.
+- `checkpoints/erayzer_dl3dv.pt`: Model trained on DL3DV only.
 
-`gradio_app.py` automatically fetches `erayzer_multi.pt` from [Hugging Face](https://huggingface.co/qitaoz/E-RayZer/blob/main/checkpoints/erayzer_multi.pt) the first time you run it (cached under your Hugging Face cache directory). You can still drop pre-downloaded weights in `checkpoints/` and/or pass `--ckpt /path/to/weights.pt` to point at a custom file.
+The Gradio demo automatically downloads missing weights on first launch. You can also fetch them manually from [Hugging Face](https://huggingface.co/qitaoz/E-RayZer/tree/main/checkpoints) and drop the files into `checkpoints/`. Update `--ckpt` if you store them elsewhere.
 
 ### 3. Launch the Gradio app
 ```bash
 python gradio_app.py \
 	--config config/erayzer.yaml \
+	--ckpt checkpoints/erayzer_multi.pt \
 	--device cuda:0 \
 	--output-dir outputs \
 	--share
@@ -54,9 +60,8 @@ If you use E-RayZer in academic or industrial research, please cite:
 @inproceedings{zhao2026erayzer,
 	title     = {E-RayZer: Self-supervised 3D Reconstruction as Spatial Visual Pre-training},
 	author    = {Qitao Zhao and Hao Tan and Qianqian Wang and Sai Bi and Kai Zhang and Kalyan Sunkavalli and Shubham Tulsiani and Hanwen Jiang},
-	booktitle = {arXiv},
-	year      = {2026},
-	note      = {arXiv link coming soon}
+	note      = {arXiv preprint arXiv:2512.10950},
+  year      = {2025}
 }
 ```
 
