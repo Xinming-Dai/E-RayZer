@@ -1,20 +1,12 @@
 <div align="center">
-  <h1>E-RayZer: Self-supervised 3D Reconstruction as Spatial Visual Pre-training</h1>
-  <a href="https://arxiv.org/abs/2512.10950"><img src="https://img.shields.io/badge/arXiv-2512.10950-b31b1b" alt="arXiv"></a>
+	<h1>E-RayZer: Self-supervised 3D Reconstruction as Spatial Visual Pre-training</h1>
+	<a href="https://arxiv.org/abs/2512.10950"><img src="https://img.shields.io/badge/arXiv-2512.10950-b31b1b" alt="arXiv"></a>
 	<a href="https://qitaozhao.github.io/E-RayZer"><img src="https://img.shields.io/badge/Project_Page-green" alt="Project Page"></a>
 	<a href="https://huggingface.co/spaces/qitaoz/E-RayZer"><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Demo-blue'></a>
 </div>
 
-<video
-  src="https://raw.githubusercontent.com/QitaoZhao/QitaoZhao.github.io/main/research/E-RayZer/videos/overview.mp4"
-  autoplay
-  loop
-  muted
-  playsinline
-  controls
->
-</video>
-
+<video src='https://raw.githubusercontent.com/QitaoZhao/QitaoZhao.github.io/main/research/E-RayZer/videos/overview.mp4'></video>
+	
 ![teaser](https://raw.githubusercontent.com/QitaoZhao/QitaoZhao.github.io/main/research/E-RayZer/images/erayzer_teaser.png)
 
 ## Repository Map
@@ -62,7 +54,7 @@ If you use E-RayZer in academic or industrial research, please cite:
 	title     = {E-RayZer: Self-supervised 3D Reconstruction as Spatial Visual Pre-training},
 	author    = {Qitao Zhao and Hao Tan and Qianqian Wang and Sai Bi and Kai Zhang and Kalyan Sunkavalli and Shubham Tulsiani and Hanwen Jiang},
 	note      = {arXiv preprint arXiv:2512.10950},
-  year      = {2025}
+    year      = {2025}
 }
 ```
 
