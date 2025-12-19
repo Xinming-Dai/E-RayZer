@@ -61,8 +61,11 @@ If you use E-RayZer in academic or industrial research, please cite:
 ## Related Project
 This project is inspired by and builds upon [RayZer](https://hwjiang1510.github.io/RayZer/). We strongly encourage readers to check it out if you haven’t already.
 
-## Acknowledgements & License
-- Model weights (and related assets) are Copyright 2025 Adobe Inc. and are distributed under the Adobe Research License.
+## License
+- **Code**: MIT License (see `LICENSE`).
+- **Model weights**: Adobe Research License (see `LICENSE-WEIGHTS`).  The model weights are **not** covered by the MIT License.
+
+## Acknowledgements
 - This work was partially done at Adobe Research, where Qitao Zhao worked as a Research Scientist Intern.
 - We thank [Zhengqi Li](https://zhengqili.github.io/) for insightful advice. We also thank [Frédéric Fortier-Chouinard](https://lefreud.github.io/), [Jiashun Wang](https://jiashunwang.github.io/), [Yanbo Xu](https://www.yanboxu.com/), [Zihan Wang](https://z1hanw.github.io/), and members of the [Physical Perception Lab](https://shubhtuls.github.io/) for helpful discussions.
 
