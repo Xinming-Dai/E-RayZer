@@ -1,0 +1,39 @@
+# E-RayZer requirements for CPU-only machines (no GPU)
+# Install with: pip install -r requirements-cpu.txt
+#
+# gsplat (Gaussian splatting backend):
+#   You CAN install gsplat without a GPU:
+#     BUILD_NO_CUDA=1 pip install -e third_party/gsplat/
+#   This skips CUDA extension compilation (no nvcc needed). The package installs,
+#   but Gaussian splatting/rasterization will NOT work at runtime - those features
+#   require the CUDA extensions. Use this if you need the package structure for
+#   imports, or skip gsplat entirely if you don't need it.
+
+# CPU-only PyTorch (install from this index first)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.0
+torchvision==0.19.0
+
+# xformers excluded - GPU-only, no CPU support. Code falls back to PyTorch attention.
+
+gradio==6.1.0
+gradio_client==2.0.1
+trimesh==4.10.1
+matplotlib>=3.7.0
+easydict>=1.13
+jaxtyping>=0.3.3
+plyfile>=1.1.3
+videoio>=0.3.0
+numpy>=1.24.0,<2
+scipy>=1.10.0
+Pillow>=10.0.0
+PyYAML>=6.0.0
+ninja>=1.11
+huggingface-hub>=0.24.0
+
+# use ffmpeg backend for writing mp4 with imageio.mimwrite
+imageio[ffmpeg]>=2.31.0
+imageio-ffmpeg>=0.5.0
+
+einops>=0.7.0
+opencv-python==4.11.0.86
